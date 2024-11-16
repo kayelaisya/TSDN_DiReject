@@ -6,6 +6,7 @@ import base64
 import joblib
 import requests
 import io
+import os
 
 def preprocess_inputs(jenis_kelamin, usia, tinggi_badan, berat_badan, tekanan_darah,
                     kolesterol, cek_kolesterol, merokok, aktif, alkohol, dokter,
@@ -557,14 +558,22 @@ elif selected == "Cek Diabetes":
         url = "https://raw.githubusercontent.com/kayelaisya/TSDN_DiReject/main/nb_tsdn.pkl"
         local_filename = "nb_tsdn.pkl"
         
-        # Unduh file model jika belum ada
+        # Periksa apakah file sudah diunduh
         if not os.path.exists(local_filename):
-            response = requests.get(url)
-            with open(local_filename, 'wb') as f:
-                f.write(response.content)
+            try:
+                # Unduh file dari URL
+                response = requests.get(url, timeout=10)
+                response.raise_for_status()  # Periksa jika ada error HTTP
+                with open(local_filename, 'wb') as f:
+                    f.write(response.content)
+                print("File model berhasil diunduh.")
+            except requests.exceptions.RequestException as e:
+                print(f"Gagal mengunduh file model: {e}")
+                raise
         
         # Muat model
         model = joblib.load(local_filename)
+
         
         if st.button("Prediksi Risiko Diabetes"):
             df_input = preprocess_inputs(jenis_kelamin, usia, tinggi_badan, berat_badan, tekanan_darah, kolesterol,
