@@ -7,18 +7,7 @@ import pickle
 import requests
 import io
 
-# Raw GitHub URL
-url = "https://raw.githubusercontent.com/kayelaisya/TSDN_DiReject/main/nb_tsdn.pkl"
-
-# Fetch the file from the URL
-response = requests.get(url)
-if response.status_code == 200:  # Check if the request was successful
-    # Load the pickle model from the binary response content
-    model = pickle.load(io.BytesIO(response.content))
-    print("Model loaded successfully!")
-else:
-    print(f"Failed to download the file. Status code: {response.status_code}")
-
+model = pickle.load(open(r"nb_tsdn.pkl", "rb"))
 
 def preprocess_inputs(jenis_kelamin, usia, tinggi_badan, berat_badan, tekanan_darah,
                     kolesterol, cek_kolesterol, merokok, aktif, alkohol, dokter,
