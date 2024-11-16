@@ -6,7 +6,7 @@ import base64
 import pickle
 import requests
 import io
-
+import joblib
 
 @st.cache(ttl=12500, allow_output_mutation=True)
 def load_model():
