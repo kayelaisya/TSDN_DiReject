@@ -554,7 +554,17 @@ elif selected == "Cek Diabetes":
             index=None
         )
         
-        model = joblib.load(open(r"https://raw.githubusercontent.com/kayelaisya/TSDN_DiReject/main/nb_tsdn.pkl", "rb"))
+        url = "https://raw.githubusercontent.com/kayelaisya/TSDN_DiReject/main/nb_tsdn.pkl"
+        local_filename = "nb_tsdn.pkl"
+        
+        # Unduh file model jika belum ada
+        if not os.path.exists(local_filename):
+            response = requests.get(url)
+            with open(local_filename, 'wb') as f:
+                f.write(response.content)
+        
+        # Muat model
+        model = joblib.load(local_filename)
         
         if st.button("Prediksi Risiko Diabetes"):
             df_input = preprocess_inputs(jenis_kelamin, usia, tinggi_badan, berat_badan, tekanan_darah, kolesterol,
