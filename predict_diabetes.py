@@ -610,7 +610,26 @@ elif selected == "Cek Diabetes":
             })
         
         st.write(sample_df)
+
+        url = "https://raw.githubusercontent.com/kayelaisya/TSDN_DiReject/main/nb_tsdn.pkl"
+        local_filename = "nb_tsdn.pkl"
         
+        # Periksa apakah file sudah diunduh
+        if not os.path.exists(local_filename):
+            try:
+                # Unduh file dari URL
+                response = requests.get(url, timeout=10)
+                response.raise_for_status()  # Periksa jika ada error HTTP
+                with open(local_filename, 'wb') as f:
+                    f.write(response.content)
+                print("File model berhasil diunduh.")
+            except requests.exceptions.RequestException as e:
+                print(f"Gagal mengunduh file model: {e}")
+                raise
+        
+        # Muat model
+        model = joblib.load(local_filename)
+      
         uploaded_file = st.file_uploader("Unggah file Excel", type=["xlsx"])
         if uploaded_file is not None:
             df = pd.read_excel(uploaded_file)
