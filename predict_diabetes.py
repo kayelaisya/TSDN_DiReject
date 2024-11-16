@@ -3,11 +3,19 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 import streamlit as st
 import base64
-import pickle
+import joblib
 import requests
 import io
 
-model = pickle.load(open(r"nb_tsdn.pkl", "rb"))
+url = "https://raw.githubusercontent.com/kayelaisya/TSDN_DiReject/main/nb_tsdn.pkl"
+
+# Fetch the file from the URL
+response = requests.get(url)
+if response.status_code == 200:  
+    model = joblib.load(io.BytesIO(response.content))
+    print("Model loaded successfully!")
+else:
+    print(f"Failed to download the file. Status code: {response.status_code}")
 
 def preprocess_inputs(jenis_kelamin, usia, tinggi_badan, berat_badan, tekanan_darah,
                     kolesterol, cek_kolesterol, merokok, aktif, alkohol, dokter,
