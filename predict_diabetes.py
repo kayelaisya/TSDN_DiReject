@@ -554,7 +554,7 @@ elif selected == "Cek Diabetes":
             index=None
         )
         
-        model = pickle.load(open(r"nb_tsdn.pkl", "rb"))
+        model = joblib.load(open(r"nb_tsdn.pkl", "rb"))
         
         if st.button("Prediksi Risiko Diabetes"):
             df_input = preprocess_inputs(jenis_kelamin, usia, tinggi_badan, berat_badan, tekanan_darah, kolesterol,
