@@ -11,9 +11,26 @@ import os
 def preprocess_inputs(jenis_kelamin, usia, tinggi_badan, berat_badan, tekanan_darah,
                     kolesterol, cek_kolesterol, merokok, aktif, alkohol, dokter,
                     kesehatan, kesehatan_mental, kesehatan_fisik, stroke, jantung, berjalan):
+    # Mapping usia (age) to numerical values for the new age categories
+    age_mapping = {
+        "18 hingga 24 tahun": 1,
+        "25 hingga 29 tahun": 2,
+        "30 hingga 34 tahun": 3,
+        "35 hingga 39 tahun": 4,
+        "40 hingga 44 tahun": 5,
+        "45 hingga 49 tahun": 6,
+        "50 hingga 54 tahun": 7,
+        "55 hingga 59 tahun": 8,
+        "60 hingga 64 tahun": 9,
+        "65 hingga 69 tahun": 10,
+        "70 hingga 74 tahun": 11,
+        "75 hingga 79 tahun": 12,
+        "80 tahun ke atas": 13
+    }
+
     input_data = {
         'jenis_kelamin': 1 if jenis_kelamin == "Laki-laki" else 0,
-        'usia': usia,
+        'usia': age_mapping.get(usia, 0),  # Convert age category to numerical value
         'tinggi_badan': tinggi_badan,
         'berat_badan': berat_badan,
         'tekanan_darah': 1 if tekanan_darah == "Tinggi" else 0,
@@ -458,8 +475,24 @@ elif selected == "Cek Diabetes":
             index=None,
         )
         
-        usia = st.number_input(
-            "2. Usia")
+        usia = st.selectbox(
+            "2. Usia",
+            ["18 hingga 24 tahun",
+                "25 hingga 29 tahun",
+                "30 hingga 34 tahun",
+                "35 hingga 39 tahun",
+                "40 hingga 44 tahun",
+                "45 hingga 49 tahun",
+                "50 hingga 54 tahun",
+                "55 hingga 59 tahun",
+                "60 hingga 64 tahun",
+                "65 hingga 69 tahun",
+                "70 hingga 74 tahun",
+                "75 hingga 79 tahun",
+                "80 tahun ke atas"
+            ],
+            index=None
+        )
         
         tinggi_badan = st.number_input(
             "3. Tinggi Badan (cm)"
@@ -576,16 +609,16 @@ elif selected == "Cek Diabetes":
 
         
         if st.button("Prediksi Risiko Diabetes"):
-            df_input = preprocess_inputs(jenis_kelamin, usia, tinggi_badan, berat_badan, tekanan_darah, kolesterol,
-                                        cek_kolesterol, merokok, aktif, alkohol, dokter, kesehatan,
-                                        kesehatan_mental, kesehatan_fisik, stroke, jantung, berjalan)
-            
-            prediction = model.predict(df_input)
-            
-            if prediction[0] == 0:
-                st.success("Hasil Prediksi: Tidak Mengidap Diabetes")
-            else:
-                st.warning("Hasil Prediksi: Prediabetes atau Diabetes")
+                    df_input = preprocess_inputs(jenis_kelamin, usia, tinggi_badan, berat_badan, tekanan_darah, kolesterol,
+                                                cek_kolesterol, merokok, aktif, alkohol, dokter, kesehatan,
+                                                kesehatan_mental, kesehatan_fisik, stroke, jantung, berjalan)
+                    
+                    prediction = model.predict(df_input)
+                    
+                    if prediction[0] == 0:
+                        st.success("Hasil Prediksi: Tidak Mengidap Diabetes")
+                    else:
+                        st.warning("Hasil Prediksi: Prediabetes atau Diabetes")
 
     elif input_method == "Unggah File Excel":
         st.write("Contoh format file Excel yang dapat diunggah:")
@@ -629,7 +662,7 @@ elif selected == "Cek Diabetes":
         
         # Muat model
         model = joblib.load(local_filename)
-      
+
         uploaded_file = st.file_uploader("Unggah file Excel", type=["xlsx"])
         if uploaded_file is not None:
             df = pd.read_excel(uploaded_file)
